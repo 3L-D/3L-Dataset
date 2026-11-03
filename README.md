@@ -3,7 +3,7 @@
 Website of the **3L Dataset**, an aligned, physically realistic low-light dataset
 for Low-Light Image Enhancement (LLIE), developed by [3L-OPTRONICS](https://3l-optronics.com).
 
-🔗 **Website:** https://Maurgene-ghezal-3l.github.io/3L-Dataset/
+🔗 **Website:** https://3L-D.github.io/3L-Dataset/
 📄 **Paper:** coming soon (arXiv)
 🤗 **Data:** Maumauuu/3L-Dataset (Hugging Face)
 
