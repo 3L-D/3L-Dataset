@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="3L-OPTRONICS Datasets, a resource dedicated to low-light imaging.">
+  <title>3L-OPTRONICS Datasets | Low-light Level dataset</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon-dark.svg" media="(prefers-color-scheme: light)">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon-light.svg" media="(prefers-color-scheme: dark)">
+  <link rel="apple-touch-icon" href="assets/favicon-dark.svg">
+</head>
+<body>
+
+  <!-- Intro : logo net sur la page floutée, défloutage progressif au bout de 3 s -->
+  <div class="intro" id="intro" tabindex="0" aria-label="Intro, click to skip">
+    <img class="intro-logo" src="assets/3l-optronics-logo-blanc.svg" alt="3L-OPTRONICS">
+  </div>
+
+  <header class="site-header">
+    <div class="grille header-grille">
+      <a class="brand" href="#top" aria-label="Back to top">
+        <img class="titre-logotype" src="assets/3l-optronics-dataset-titre-logotype.svg" alt="3L-OPTRONICS Dataset">
+      </a>
+      <div class="header-droite">
+        <nav class="top-nav" aria-label="Main navigation">
+          <a href="#about">About</a>
+          <a href="#video">Video</a>
+          <a href="#services">As-a-service</a>
+          <a href="#dataset">The dataset</a>
+        </nav>
+        <a class="button button-clair" href="#downloads">Download <span class="fleche fleche-diag" aria-hidden="true"></span></a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Une seule texture bleue derrière toute la page : les blocs clairs sont posés dessus -->
+  <div class="page">
+  <main id="top">
+    <section class="hero section-dark">
+      <div class="grille hero-grille">
+        <div class="hero-copy">
+          <h1 class="titre-jaune">Low-Light<br><span class="ligne">level</span><br>dataset.</h1>
+          <p class="hero-lead">An aligned, physically realistic,<br><b>low-light dataset</b>.</p>
+          <div class="hero-actions">
+            <a class="button button-clair" href="#about">Discover project <span class="fleche fleche-diag-bas" aria-hidden="true"></span></a>
+            <a class="text-link" href="#downloads"><span class="lien-texte">Downloads information</span> <span class="fleche fleche-diag" aria-hidden="true"></span></a>
+          </div>
+        </div>
+        <div class="hero-visual" aria-label="Model of the acquisition bench">
+          <img class="hero-bench" src="assets/3l-bench-hero.webp" alt="Model of the dark box: enclosure, rotating stage, camera and integrating sphere">
+          <figure class="hero-rgb hero-rgb-1"><img src="assets/rgb-01.jpg" alt="Colour (RGB) capture of the forest scene under night illumination"></figure>
+          <figure class="hero-rgb hero-rgb-2"><img src="assets/rgb-02.jpg" alt="Colour (RGB) capture of the forest scene at a very low illumination level"></figure>
+          <figure class="hero-rgb hero-rgb-3"><img src="assets/rgb-03.jpg" alt="Wide-field colour (RGB) capture inside the dark box"></figure>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="section-light section-pad">
+      <div class="grille">
+        <p class="section-label">01 / The project</p>
+        <div class="deux-colonnes">
+          <div>
+            <h2><span class="surligne">Realistic data.</span><br><span class="surligne">Reliable vision.</span></h2>
+            <p class="lead">Captured under standardized nighttime illumination, our <b>dataset</b>  recreates <b>realistic outdoor scenarios</b> across <b>defined levels</b>  of darkness.</p>
+            <p class="lead">Each acquisition follows controlled lighting conditions, enabling <b>reliable and reproducible evaluation</b>.</p>
+          </div>
+
+          <div class="benchmark-panel">
+            <div class="benchmark-heading">
+              <div>
+                <span class="petit-label">Benchmark</span>
+                <h3>Results</h3>
+              </div>
+              <span class="benchmark-count">08 neural networks · 05 metrics</span>
+            </div>
+            <div class="benchmark-table-wrap">
+              <table class="benchmark-table">
+                <thead>
+                  <tr>
+                    <th>Network</th>
+                    <th title="Peak Signal-to-Noise Ratio">PSNR <span class="fleche fleche-haut fleche-petite" aria-label="higher is better"></span></th>
+                    <th title="Structural Similarity Index">SSIM <span class="fleche fleche-haut fleche-petite" aria-label="higher is better"></span></th>
+                    <th title="Learned Perceptual Image Patch Similarity">LPIPS <span class="fleche fleche-bas fleche-petite" aria-label="lower is better"></span></th>
+                    <th title="Naturalness Image Quality Evaluator">NIQE <span class="fleche fleche-bas fleche-petite" aria-label="lower is better"></span></th>
+                    <th title="Inference time in milliseconds">Inference time (ms) <span class="fleche fleche-bas fleche-petite" aria-label="lower is better"></span></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>SCI</td><td>37.68</td><td>0.8673</td><td>0.6905</td><td>29.07</td><td>2.08</td></tr>
+                  <tr><td>EnlightenGAN</td><td>36.66</td><td>0.8676</td><td>0.0801</td><td>24.04</td><td>58.14</td></tr>
+                  <tr><td>Zero-DCE</td><td>37.90</td><td>0.8693</td><td>0.7785</td><td>10.47</td><td>26.21</td></tr>
+                  <tr><td>KinD</td><td>41.98</td><td>0.9298</td><td>0.0277</td><td>16.01</td><td>87.22</td></tr>
+                  <tr><td>URetinex-Net++</td><td>40.95</td><td>0.9158</td><td>0.0311</td><td>20.87</td><td>254.01</td></tr>
+                  <tr><td>WaveMamba</td><td>54.80</td><td>0.9808</td><td>0.0013</td><td>21.71</td><td>1322.63</td></tr>
+                  <tr><td>MambaIR</td><td>51.85</td><td>0.9614</td><td>0.0011</td><td>21.36</td><td>9199.43</td></tr>
+                  <tr><td>RetinexFormer</td><td>44.64</td><td>0.9687</td><td>0.0210</td><td>17.78</td><td>541.14</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="note legende">PSNR and SSIM are higher-is-better,<br>while LPIPS, NIQE and the inference time are lower-is-better.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="video" class="section-dark section-pad">
+      <div class="grille">
+        <p class="section-label">02 / In pictures</p>
+        <h2 class="titre-section">The project<br>in seconds.</h2>
+        <div class="video-frame" id="video-frame" data-video-url="">
+          <video id="local-video" controls playsinline preload="metadata" poster="assets/3l-bench-hero.webp">
+            <source src="assets/bnl-video.mp4" type="video/mp4">
+            Your browser does not support video playback.
+          </video>
+          <img src="assets/n2.jpg" alt="Preview of the project presentation video">
+          <div class="video-overlay">
+            <button class="play-button" id="play-button" type="button" aria-label="Load the video"><svg class="triangle" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M6 4L16 10L6 16Z"/></svg></button>
+            <div class="video-caption"><span>3L-OPTRONICS Datasets</span><span>Introducing the 3L dataset</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="services" class="section-neutre section-pad">
+      <div class="grille">
+        <p class="section-label">03 / As-a-service</p>
+        <div class="deux-colonnes">
+          <h2><span class="surligne">Your sensor.</span><br><span class="surligne">Your night.</span></h2>
+          <p class="lead">The dataset published here relies on our standard night levels. <b>The same calibrated bench can be reconfigured <br class="bureau">for your own requirements</b>.</p>
+        </div>
+        <div class="service-grid">
+          <article class="service-card service-card-dark">
+            <span class="petit-label">01 / Custom dataset</span>
+            <h3>Built around<br>your sensor.</h3>
+            <p>Beyond the standard night levels, <br class="bureau">we produce acquisitions <b>tailored to your sensor</b>.</p>
+            <ul class="service-tags">
+              <li>Specific wavelengths (&#955;)</li>
+              <li>Visible low light</li>
+              <li>Custom night levels</li>
+              <li>Your optics, your sensor</li>
+            </ul>
+            <div class="service-contact">
+              <span class="contact-bouton"><button class="button button-clair mail-copy" type="button" data-mail="contact@3l-optronics.com">Discuss your use case <span class="fleche fleche-diag" aria-hidden="true"></span></button><span class="mail-confirmation" aria-live="polite"></span></span>
+              <span class="service-mail">contact@3l-optronics.com</span>
+            </div>
+          </article>
+          <article class="service-card service-card-light">
+            <span class="petit-label">02 / Sensor characterization</span>
+            <h3>How far does it really see?</h3>
+            <p>We evaluate the ability of a sensor to see at night on the <br class="bureau">calibrated bench, and compute the associated metrics, <br class="bureau"><b>either on our standard night levels <br class="bureau">or on the specifications you define</b>.</p>
+            <ul class="service-tags">
+              <li>Standard night levels</li>
+              <li>Your own specifications</li>
+              <li>Measured, not estimated</li>
+              <li>Comparable metrics</li>
+            </ul>
+            <div class="service-contact">
+              <span class="contact-bouton"><button class="button button-fonce mail-copy" type="button" data-mail="contact@3l-optronics.com">Have your sensor tested <span class="fleche fleche-diag" aria-hidden="true"></span></button><span class="mail-confirmation" aria-live="polite"></span></span>
+              <span class="service-mail">contact@3l-optronics.com</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="dataset" class="section-light section-pad">
+      <div class="grille">
+        <p class="section-label">04 / Inside the dataset</p>
+        <h2 class="titre-section"><span class="surligne">A structure designed</span><br><span class="surligne">to be reused.</span></h2>
+        <div class="dataset-table-wrap">
+          <table class="dataset-table">
+            <thead>
+              <tr><th>Block</th><th>Content</th><th>Purpose</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><span class="row-index">01</span>Images</td><td>Low-light paired acquisitions</td><td>Provide the raw material</td><td><span class="status">Available</span></td></tr>
+              <tr><td><span class="row-index">02</span>Classes</td><td>One folder per illumination level (n0, n1,…): the folder name is the label</td><td>Enable supervised training and evaluation</td><td><span class="status">Available</span></td></tr>
+              <tr><td><span class="row-index">03</span>Metadata</td><td>One JSON file per folder: image name and stage angle in degrees for each image, plus session time, integration time, start and end angles</td><td>Make results comparable and reproducible</td><td><span class="status">Available</span></td></tr>
+              <tr><td><span class="row-index">04</span>Paper</td><td>Scientific article and arXiv link</td><td>Document the method and make the dataset citable</td><td><span class="status">Available</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-dark section-pad">
+      <div class="grille">
+        <p class="section-label">05 / Examples</p>
+        <h2>A few windows<br>into the data.</h2>
+        <p class="mention-tactile">Touch to zoom</p>
+        <div class="gallery-grid">
+          <figure class="gallery-card">
+            <button class="image-button" data-lightbox="assets/n1.jpg" aria-label="Enlarge capture n1"><img src="assets/n1.jpg" alt="Dataset capture at illumination level n1"></button>
+            <figcaption><span>N1</span>Illumination level 01</figcaption>
+          </figure>
+          <figure class="gallery-card">
+            <button class="image-button" data-lightbox="assets/n2.jpg" aria-label="Enlarge capture n2"><img src="assets/n2.jpg" alt="Dataset capture at illumination level n2"></button>
+            <figcaption><span>N2</span>Illumination level 02</figcaption>
+          </figure>
+          <figure class="gallery-card">
+            <button class="image-button" data-lightbox="assets/n3.jpg" aria-label="Enlarge capture n3"><img src="assets/n3.jpg" alt="Dataset capture at illumination level n3"></button>
+            <figcaption><span>N3</span>Illumination level 03</figcaption>
+          </figure>
+        </div>
+        <p class="lead legende-galerie">Actual captures from the dataset,<br>taken at different illumination levels.</p>
+      </div>
+    </section>
+
+    <section id="downloads" class="section-blanc section-pad">
+      <div class="grille deux-colonnes downloads-grid">
+        <div>
+          <p class="section-label">06 / Resources</p>
+          <h2 class="surligne-droite"><span class="surligne">Ready to</span><span class="surligne">explore?</span></h2>
+          <p class="lead">Read the paper on arXiv and download the dataset sample on Hugging Face.</p>
+          <p class="contact-line">A specific need? <span class="contact-mail"><button class="mail-copy lien-mail" type="button" data-mail="contact@3l-optronics.com"><span class="lien-mail-texte">contact@3l-optronics.com</span><span class="fleche fleche-diag" aria-hidden="true"></span></button><span class="mail-confirmation" aria-live="polite"></span></span></p>
+        </div>
+       <div class="download-list">
+          <a class="download-item" href="https://arxiv.org/abs/2611.02695" target="_blank" rel="noopener"><span><b>Scientific paper</b><small><span class="download-source">arXiv · method and benchmark</span><span class="status status-disponible">Available</span></small></span><i class="fleche fleche-diag fleche-grande" aria-hidden="true"></i></a>
+<a class="download-item" href="https://huggingface.co/datasets/3L-OPTRONICS/3L-Dataset" target="_blank" rel="noopener"><span><b>Dataset sample</b><small><span class="download-source">Hugging Face · sample images<span class="hf-downloads" data-hf-dataset="3L-OPTRONICS/3L-Dataset" hidden></span></span><span class="status status-disponible">Available</span></small></span><i class="fleche fleche-diag fleche-grande" aria-hidden="true"></i></a>       </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="grille footer-grille">
+      <a class="brand" href="#top" aria-label="Back to top">
+        <img class="titre-logotype" src="assets/3l-optronics-dataset-titre-logotype.svg" alt="3L-OPTRONICS Dataset">
+      </a>
+      <p>Low-light level dataset designed to democratise night vision.</p>
+      <div class="footer-social">
+        <a class="footer-icon" href="https://3l-optronics.com" target="_blank" rel="noopener" aria-label="3L-OPTRONICS website" title="3l-optronics.com">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm7.44 9h-3.06a15.6 15.6 0 0 0-1.2-5.42A8.02 8.02 0 0 1 19.44 11ZM12 4.04c.7.96 1.75 3.23 1.96 6.96h-3.92C10.25 7.27 11.3 5 12 4.04ZM9.82 5.58A15.6 15.6 0 0 0 8.62 11H5.56a8.02 8.02 0 0 1 4.26-5.42ZM5.56 13h3.06c.1 2.08.5 3.94 1.2 5.42A8.02 8.02 0 0 1 5.56 13Zm6.44 6.96c-.7-.96-1.75-3.23-1.96-6.96h3.92c-.21 3.73-1.26 6-1.96 6.96Zm2.18-1.54c.7-1.48 1.1-3.34 1.2-5.42h3.06a8.02 8.02 0 0 1-4.26 5.42Z"/></svg>
+        </a>
+        <a class="footer-icon" href="https://www.linkedin.com/company/3l-optronics" target="_blank" rel="noopener" aria-label="3L-OPTRONICS on LinkedIn" title="LinkedIn">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9h4v12H3V9Zm6.5 0h3.83v1.64h.05a4.2 4.2 0 0 1 3.78-2.08C21.3 8.56 22 11 22 14.24V21h-4v-6c0-1.43-.03-3.28-2-3.28-2.01 0-2.32 1.57-2.32 3.18V21h-4V9Z"/></svg>
+        </a>
+      </div>
+      <a class="retour-haut" href="#top">Back to top <span class="fleche fleche-haut" aria-hidden="true"></span></a>
+    </div>
+  </footer>
+  </div>
+
+  <div class="lightbox" id="lightbox" aria-hidden="true">
+    <div class="lightbox-cadre">
+      <img id="lightbox-image" src="" alt="">
+      <button class="lightbox-close" id="lightbox-close" type="button" aria-label="Close"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3 3L13 13M13 3L3 13"/></svg></button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

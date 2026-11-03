@@ -1,0 +1,781 @@
+/* ============================================================
+   3L-OPTRONICS Datasets
+   Charte 3L-OPTRONICS :
+   - Jost, trois graisses : Regular (400), ExtraBold (800), Black (900)
+   - capitales, approche +53 à +120 / 1000
+   - Regular et XBlack dans la même ligne, sans graisse intermédiaire
+   - jaune #DCFF1E en ponctuation seulement
+   - surlignement de la charte (p.22) : bande jaune en produit, décalée
+   - filets 1 px ; filets blancs 0,5 px
+   Police : Jost, alternative libre à la Futura (SIL Open Font License 1.1,
+   assets/fonts/OFL-Jost.txt) : publiable dans un dépôt public.
+   ============================================================ */
+
+@font-face { font-family: "Jost"; font-weight: 400; font-style: normal; font-display: swap;
+  src: url("assets/fonts/jost-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "Jost"; font-weight: 800; font-style: normal; font-display: swap;
+  src: url("assets/fonts/jost-latin-800-normal.woff2") format("woff2"); }
+@font-face { font-family: "Jost"; font-weight: 900; font-style: normal; font-display: swap;
+  src: url("assets/fonts/jost-latin-900-normal.woff2") format("woff2"); }
+
+
+:root {
+  /* Couleurs de la charte */
+  --bleu-3: #140A50;        /* fond foncé */
+  --bleu-1: #140A78;
+  --accent-bleu: #3219D2;   /* pictos et repères sur fond clair */
+  --accent: #DCFF1E;        /* ponctuation uniquement */
+  --neutre-0: #F4F2F6;      /* fond clair */
+  --neutre-1: #E9E5EC;      /* titres sur fond foncé */
+  --neutre-2: #DED9E6;
+  --neutre-3: #D3CCD8;      /* texte secondaire sur fond foncé, bandeau lavande */
+  --blanc: #FFFFFF;
+  --filet-fonce: rgba(20, 10, 80, .22);
+  --filet-clair: rgba(233, 229, 236, .3);
+  /* Tous les contours et filets blancs : même épaisseur, même blanc.
+     0,5 px = un seul pixel physique sur écran Retina (le plus fin possible).
+     Sur écran standard, où 0,5 px serait arrondi à 1 px, on garde 1 px mais à 45 % pour qu'il reste léger. */
+  --ep-filet-blanc: .5px;
+  --filet-blanc: var(--ep-filet-blanc) solid var(--blanc);
+
+  /* Typographie */
+  --futura: "Jost", "Futura PT", Futura, sans-serif;
+  --app-titre: .065em;      /* XBlack, titres */
+  --app-texte: .06em;       /* Regular, capitales */
+  --app-label: .12em;       /* petits labels */
+
+  /* Grille : une marge unique, deux colonnes égales partout */
+  --marge: clamp(20px, 5.56vw, 80px);
+  --gouttiere: clamp(32px, 5.56vw, 80px);
+  --largeur: 1280px;
+
+  /* Mouvement : une seule durée et une seule courbe pour tous les survols
+     (remplissages, filets, soulignements) */
+  --survol-duree: .4s;
+  --survol-courbe: cubic-bezier(.2, .7, .3, 1);
+  /* Ressort de 3l-optronics.com (Framer : rebond 0,2, 0,4 s), pour les titres, les coins de la galerie et la croix de la visionneuse.
+     Courbe simple pour les anciens navigateurs, courbe exacte juste en dessous. */
+  --ressort-3l: cubic-bezier(.3, 1.15, .55, 1);
+  /* Lavande du survol des lignes (Neutre 3 à 45 % sur blanc), en couleur pleine pour que la case soit remplie */
+  --lavande-survol: #E7E4EB;
+}
+@supports (transition-timing-function: linear(0, 1)) {
+  :root { --ressort-3l: linear(0, .058, .189, .346, .501, .639, .752, .84, .905, .951, .981, .999, 1.01, 1.014, 1.015, 1.014, 1.012, 1.01, 1.007, 1.005, 1.004, 1.002, 1.001, 1.001, 1); }
+}
+
+@media (max-resolution: 1.49dppx) {
+  :root { --ep-filet-blanc: 1px; --filet-blanc: 1px solid rgba(255, 255, 255, .45); }
+}
+
+* { box-sizing: border-box; }
+html {
+  scroll-behavior: smooth; scroll-padding-top: 96px;   /* liens internes : défilement animé par script.js */
+  /* Pointeur : petite cible noire (halo blanc pour les fonds bleus). Sur un lien, la cible se verrouille. */
+  cursor: url("assets/curseur-cible.svg") 12 12, crosshair;
+}
+body {
+  margin: 0;
+  background: var(--neutre-0);
+  color: var(--bleu-3);
+  font-family: var(--futura);
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 1.6;
+}
+button, a { font: inherit; }
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+b, strong { font-weight: 900; }
+
+/* ---------- Grille ---------- */
+.grille {
+  width: 100%;
+  max-width: calc(var(--largeur) + 2 * var(--marge));
+  margin-inline: auto;
+  padding-inline: var(--marge);
+}
+.deux-colonnes {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  column-gap: var(--gouttiere);
+  row-gap: 32px;
+  align-items: start;
+}
+.section-pad { padding-block: clamp(80px, 9vw, 140px); }
+
+/* ---------- Fonds ----------
+   Une seule texture bleue pour toute la page, mise à l'échelle sans déformation
+   (cover) : les sections foncées sont transparentes et en montrent chacune une
+   partie, les blocs clairs sont posés dessus. */
+.page {
+  background: var(--bleu-3) url("assets/fond-texture.jpg") center top / cover no-repeat;
+  overflow-x: clip;   /* le surlignement décalé ne crée pas de défilement horizontal */
+}
+.section-dark { background: transparent; color: var(--neutre-1); }
+html.video-bleu #video { background: var(--bleu-3); }   /* test : ?video=bleu */
+.section-light {
+  /* dégradé des fonds clairs, repris du fichier fourni : blanc, puis Neutre 0 */
+  background: linear-gradient(180deg, var(--blanc) 10.7%, var(--neutre-0) 88%);
+  color: var(--bleu-3);
+}
+.section-neutre {
+  /* image claire de contexte, abstraite et zoomée : ombres de feuillage, retournée à 180° pour que la carte blanche ressorte (test : ?fond=rayons) */
+  background: var(--neutre-2) url("assets/fond-clair-feuillage.jpg") center / cover no-repeat;
+  color: var(--bleu-3);
+}
+html.fond-rayons .section-neutre { background-image: url("assets/fond-clair-rayons.jpg"); }
+.section-blanc { background: var(--blanc); color: var(--bleu-3); }
+
+
+/* ---------- Typographie ---------- */
+h1, h2, h3 { margin: 0; text-transform: uppercase; }
+/* Tous les titres de section, hero compris : même corps, même graisse (XBold), même approche */
+h1, h2 { font-weight: 800; font-size: clamp(28px, 2.8vw, 40px); line-height: 1.2; letter-spacing: .053em; }
+h1 { color: var(--neutre-1); }
+/* Exception, la landing seulement : le titre du hero est beaucoup plus grand que les titres 01 à 06,
+   sur trois lignes (WHEN / VISION FAILS, / WE BEGIN.), et il s'écrit lettre par lettre à l'arrivée (environ 1,3 s).
+   En XBlack (900), la seule graisse plus forte que les autres titres.
+   Corps calculé pour que « VISION FAILS, » (8,47 em en XBlack) remplisse exactement la colonne de gauche :
+   600 px à 1440 px de large → 70,8 px ; la colonne vaut 41,66 vw, d'où 4,92 vw. */
+.hero h1 { font-weight: 900; font-size: clamp(34px, 4.91vw, 70.8px); line-height: 1.08; }
+.hero h1 .ligne { white-space: nowrap; }
+/* Halo derrière le titre : une lumière bleue, comme un flash adouci. Son centre est placé
+   une ligne sous le I de BEGIN (position calculée en script : --halo-x, --halo-y), pour que
+   la lumière éclate dans l'espace sous « WE BEGIN. ». Elle s'allume avec le dernier mot (BEGIN.) :
+   elle monte vite (0,35 s) puis se pose en une lueur douce (1,4 s). */
+.hero h1 { position: relative; isolation: isolate; --halo-x: 72%; --halo-y: 125%; }
+.hero h1::before {
+  content: ""; position: absolute; z-index: -1; pointer-events: none;
+  left: var(--halo-x); top: var(--halo-y); width: 10em; height: 7em; transform: translate(-50%, -50%);
+  /* lumière teintée du bleu vif de la charte (#3219D2, éclairci) : même taille et même intensité que le blanc, sans l'effet violacé */
+  background: radial-gradient(closest-side, rgba(110, 95, 255, .78) 0%, rgba(110, 95, 255, .32) 35%, rgba(110, 95, 255, .09) 70%, rgba(110, 95, 255, 0) 100%);
+  filter: blur(6px);
+  opacity: .7;
+}
+.hero h1.a-ecrire::before { opacity: 0; }
+.hero h1.a-ecrire.allume::before { animation: flash 1.75s cubic-bezier(.2, .7, .3, 1) forwards; }
+@keyframes flash {
+  0%   { opacity: 0; }
+  20%  { opacity: 1; }
+  100% { opacity: .7; }
+}
+
+.a-ecrire .lettre { opacity: 0; }
+.a-ecrire .lettre.vue { opacity: 1; }
+
+/* « When vision fails, we begin. » et « The project in seconds. » entièrement en jaune ;
+   ?titre=blanc pour la variante sans jaune */
+.titre-jaune { color: var(--accent); }
+html.titre-blanc .titre-jaune { color: var(--neutre-1); }
+.section-light h2, .section-neutre h2, .section-blanc h2 { color: var(--accent-bleu); }   /* titres #3219D2 sur fond clair */
+
+/* Surlignement, mesuré sur 3l-optronics.com (« See when others can't », titre de 50 px) :
+   bande #DCFF1E de la longueur du texte, en produit (multiply), une bande par ligne.
+   Épaisseur 33 px = 0,66 em ; haut de la bande 18 px au-dessus de la ligne de base = 0,36 em ;
+   décalage à droite 39 px = 0,78 em. Ici, la ligne de base tombe à 1,075 em du haut de la ligne
+   (interligne 1,2 ; métriques de Futura Now Text identiques sur Mac, Windows et Linux). */
+.surligne { position: relative; display: inline-block; }
+/* Règle particulière (« Ready to explore? ») : les bandes se terminent toutes au même point à droite.
+   Le titre prend la largeur de sa plus longue ligne, chaque ligne occupe toute cette largeur. */
+.surligne-droite { width: fit-content; }
+.surligne-droite .surligne { display: block; }
+.surligne::after {
+  content: ""; position: absolute; z-index: 1; pointer-events: none;
+  top: .715em; left: .78em; width: calc(100% - .053em); height: .66em;
+  background: var(--accent); mix-blend-mode: multiply;
+}
+
+/* Apparition des titres de section, quand ils arrivent à l'écran, ligne par ligne (0,2 s d'écart).
+   Même geste que le titre de 3l-optronics.com : le texte arrive de la gauche en apparaissant,
+   puis, sur les titres bleus, la bande jaune glisse depuis la droite 0,3 s plus tard.
+   Les titres des fonds bleus font le même mouvement, sans bande.
+   Les classes sont posées par script.js : sans script, les titres s'affichent normalement. */
+@property --sl-texte-o { syntax: "<number>"; inherits: true; initial-value: 1; }
+@property --sl-texte-x { syntax: "<length>"; inherits: true; initial-value: 0px; }
+@property --sl-bande-o { syntax: "<number>"; inherits: true; initial-value: 1; }
+@property --sl-bande-x { syntax: "<length>"; inherits: true; initial-value: 0px; }
+.surligne-texte { position: relative; left: var(--sl-texte-x, 0px); opacity: var(--sl-texte-o, 1); }
+.surligne::after { opacity: var(--sl-bande-o, 1); transform: translateX(var(--sl-bande-x, 0px)); }
+.titre-anime .surligne { --sl-texte-o: .001; --sl-texte-x: -3em; --sl-bande-o: .001; --sl-bande-x: 3.4em; }
+.titre-anime.est-visible .surligne {
+  --sl-texte-o: 1; --sl-texte-x: 0px; --sl-bande-o: 1; --sl-bande-x: 0px;
+  transition:
+    --sl-texte-o .5s var(--ressort-3l) calc(var(--ligne, 0) * .2s),
+    --sl-texte-x .5s var(--ressort-3l) calc(var(--ligne, 0) * .2s),
+    --sl-bande-o .5s var(--ressort-3l) calc(var(--ligne, 0) * .2s + .3s),
+    --sl-bande-x .5s var(--ressort-3l) calc(var(--ligne, 0) * .2s + .3s);
+}
+.titre-anime .titre-ligne { position: relative; left: -3em; opacity: .001; }
+.titre-anime.est-visible .titre-ligne {
+  left: 0; opacity: 1;
+  transition: left .5s var(--ressort-3l) calc(var(--ligne, 0) * .2s), opacity .5s var(--ressort-3l) calc(var(--ligne, 0) * .2s);
+}
+h3 { font-weight: 900; font-size: clamp(20px, 1.7vw, 24px); line-height: 1.25; letter-spacing: var(--app-titre); }
+.titre-section { margin-bottom: 56px; }
+
+.lead {
+  margin: 0 0 18px; max-width: 34em;
+  font-size: 15px; line-height: 1.9; letter-spacing: var(--app-texte); text-transform: uppercase;
+}
+.lead b { letter-spacing: .064em; }
+.deux-colonnes > h2 + .lead,
+.deux-colonnes > div > h2 + .lead { margin-top: 32px; }
+.deux-colonnes > .lead { margin-top: 6px; }
+
+/* Label de section : filet simple + numéro, jaune sur fond foncé uniquement */
+.section-label {
+  display: flex; align-items: center; gap: 16px;
+  margin: 0 0 40px;
+  font-weight: 800; font-size: 12px; line-height: 1; letter-spacing: var(--app-label); text-transform: uppercase;
+  color: var(--accent-bleu);
+}
+.section-label::before { content: ""; width: 40px; height: 1px; background: currentColor; }
+.section-dark .section-label { color: var(--accent); }
+.petit-label {
+  display: block;
+  font-weight: 800; font-size: 11px; line-height: 1.4; letter-spacing: var(--app-label); text-transform: uppercase;
+  color: var(--accent-bleu);
+}
+/* Corps de légende : un seul, petit, pour les notes et les textes d'accompagnement */
+.legende { margin: 0; max-width: 40em; font-size: 10px; line-height: 1.7; letter-spacing: .09em; text-transform: uppercase; }
+.note { margin-top: 16px; max-width: none; }   /* deux lignes : retour après « higher-is-better, » */
+
+/* ---------- Boutons et liens ---------- */
+/* Au survol, la couleur remplit le bouton de gauche à droite et repart par la droite.
+   Bouton clair (sur fond bleu) : jaune, texte Bleu 3.
+   Bouton foncé (sur fond clair) : bleu vif, texte qui reste clair, comme sur 3l-optronics.com. */
+.button {
+  display: inline-flex; align-items: baseline; gap: 12px;
+  padding: 17px 22px;
+  border: 0; border-radius: 2px; cursor: pointer;
+  font-weight: 900; font-size: 12px; line-height: 1; letter-spacing: .08em; text-transform: uppercase; white-space: nowrap;
+  text-align: left;   /* si le texte passe sur deux lignes, il reste ferré à gauche */
+  background-image: linear-gradient(var(--accent), var(--accent));
+  background-repeat: no-repeat; background-position: right center; background-size: 0% 100%;
+  transition: background-size var(--survol-duree) var(--survol-courbe), color .2s .12s;
+}
+.button-clair { background-color: var(--neutre-1); color: var(--bleu-3); }
+.button-fonce { background-color: var(--bleu-3); color: var(--neutre-1); background-image: linear-gradient(var(--accent-bleu), var(--accent-bleu)); }
+.button:hover, .button:focus-visible { background-position: left center; background-size: 100% 100%; color: var(--bleu-3); }
+.button-fonce:hover, .button-fonce:focus-visible { color: var(--neutre-1); }
+.text-link {
+  display: inline-flex; align-items: baseline; gap: 12px;
+  padding-block: 17px;
+  font-weight: 900; font-size: 12px; line-height: 1; letter-spacing: .08em; text-transform: uppercase; white-space: nowrap;
+}
+/* Le soulignement s'arrête sous le texte, pas sous la flèche */
+.lien-texte { position: relative; }
+/* Au repos : texte clair, souligné. Au survol, le texte et le soulignement passent au jaune de gauche à droite
+   (le soulignement s'épaissit à 1 px pour se voir), la flèche passe au jaune et tourne. */
+.lien-texte::after {
+  content: ""; position: absolute; left: 0; right: .08em; bottom: -7px; height: var(--ep-filet-blanc);
+  background: linear-gradient(var(--accent), var(--accent)) no-repeat right center / 0% 100%, var(--neutre-1);
+  transition: background-size var(--survol-duree) var(--survol-courbe), height .2s;
+}
+.text-link:hover .lien-texte::after, .text-link:focus-visible .lien-texte::after { height: 1px; background-position: left center; background-size: 100% 100%; }
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .lien-texte {
+    color: transparent; -webkit-background-clip: text; background-clip: text;
+    background-image: linear-gradient(var(--accent), var(--accent)), linear-gradient(var(--neutre-1), var(--neutre-1));
+    background-repeat: no-repeat; background-position: right center, 0 0; background-size: 0% 100%, 100% 100%;
+    transition: background-size var(--survol-duree) var(--survol-courbe);
+  }
+  .text-link:hover .lien-texte, .text-link:focus-visible .lien-texte { background-position: left center, 0 0; background-size: 100% 100%, 100% 100%; }
+}
+.text-link:hover .fleche, .text-link:focus-visible .fleche { color: var(--accent); }
+a:focus-visible, button:focus-visible { outline: 1px solid var(--accent); outline-offset: 4px; }
+
+/* ---------- Flèches ----------
+   Même dessin et même proportion que les boutons Q&A / Get in touch de
+   3l-optronics.com : tête pleine, trait épais, bouts arrondis, à peu près
+   la hauteur des capitales (trait renforcé pour tenir à côté du XBlack). Taille en em : elles suivent le texte
+   et prennent sa couleur. Au survol, la diagonale tourne en flèche droite,
+   comme sur le site. */
+.fleche {
+  display: inline-block; flex: none; width: .72em; height: .72em;
+  margin-bottom: .02em;   /* centrée sur la hauteur des capitales */
+  background-color: currentColor;
+  -webkit-mask: var(--fleche) center / 100% 100% no-repeat; mask: var(--fleche) center / 100% 100% no-repeat;
+  transition: transform .25s ease, color .2s;
+}
+.fleche-diag   { --fleche: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='5.6 5.6 12.8 12.8'%3E%3Cpath d='M7 17L17 7M7 7H17V17' fill='none' stroke='%23000' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
+.fleche-bas    { --fleche: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='5.6 5.6 12.8 12.8'%3E%3Cpath d='M12 7V17M7 12L12 17L17 12' fill='none' stroke='%23000' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
+.fleche-haut   { --fleche: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='5.6 5.6 12.8 12.8'%3E%3Cpath d='M12 17V7M7 12L12 7L17 12' fill='none' stroke='%23000' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
+.fleche-diag-bas { --fleche: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='5.6 5.6 12.8 12.8'%3E%3Cpath d='M7 7L17 17M17 7V17H7' fill='none' stroke='%23000' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
+.fleche-droite { --fleche: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='5.6 5.6 12.8 12.8'%3E%3Cpath d='M7 12H17M12 7L17 12L12 17' fill='none' stroke='%23000' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
+.fleche-petite { margin-left: .3em; }
+.fleche-grande { font-size: 20px; }
+.button:hover .fleche-diag, .button:focus-visible .fleche-diag,
+.text-link:hover .fleche-diag, .text-link:focus-visible .fleche-diag,
+.lien-mail:hover .fleche-diag, .lien-mail:focus-visible .fleche-diag,
+.download-item:not(.is-disabled):hover .fleche-diag { transform: rotate(45deg); }
+/* « Discover project » : flèche diagonale vers le bas à droite, qui tourne vers le bas au survol (la suite de la page).
+   « Back to top » : la flèche monte. */
+.button:hover .fleche-diag-bas, .button:focus-visible .fleche-diag-bas { transform: rotate(45deg); }
+.retour-haut:hover .fleche-haut, .retour-haut:focus-visible .fleche-haut { transform: translateY(-.22em); }
+
+/* ---------- En-tête ---------- */
+/* Fixé en haut, comme sur 3l-optronics.com : dégradé foncé vers transparent + flou 18 px */
+.site-header {
+  position: fixed; z-index: 20; top: 0; left: 0; right: 0;
+  padding-block: 20px;
+  color: var(--neutre-1);
+  background: linear-gradient(180deg, rgba(17, 17, 17, .7) 0%, rgba(17, 17, 17, 0) 100%);
+  -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
+}
+.header-grille {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: var(--gouttiere);
+  align-items: baseline;   /* menu ferré sur la ligne de base de 3L-OPTRONICS DATASETS */
+}
+.titre-logotype { display: block; width: auto; }
+/* Capitales de 3L-OPTRONICS à 20 px, comme le logo du site ; même taille sur tous les écrans.
+   (titre logotypé « 3L-OPTRONICS | DATASET », viewBox 2681,3 × 301,5)
+   La marge négative place la ligne de base du logotype (87,7 % de sa hauteur) sur celle du menu. */
+.site-header .titre-logotype { height: 26.6px; margin-bottom: -3.3px; }
+.site-header .brand { display: inline-block; line-height: 0; }
+.header-droite { display: flex; align-items: baseline; justify-content: space-between; gap: 24px; }
+.site-header .button { padding: 11px 16px; }
+/* Bouton capteur (Download) : deux coins de visée qui longent le contour au survol, dans le sens horaire,
+   et finissent leur tour en sortant. Au clic, le contour entier se trace. Le viseur est ajouté par script.js. */
+.bouton-capteur { position: relative; border-radius: 4px; }
+.viseur { position: absolute; overflow: visible; pointer-events: none; }
+.bouton-capteur .viseur { inset: -4px; width: calc(100% + 8px); height: calc(100% + 8px); }
+.viseur rect {
+  fill: none; stroke: var(--blanc); stroke-width: 1;
+  transition: stroke-dashoffset var(--survol-duree) var(--survol-courbe), stroke-dasharray var(--survol-duree) var(--survol-courbe), stroke var(--survol-duree) var(--survol-courbe);   /* même rythme que le remplissage des boutons */
+}
+.est-survole .viseur rect, .est-clique .viseur rect { stroke: var(--accent); }
+.top-nav { display: flex; gap: clamp(18px, 2.2vw, 36px); }
+.top-nav a {
+  position: relative;
+  font-size: 12px; line-height: 1; letter-spacing: .1em; text-transform: uppercase;
+  padding-block: 6px; transition: color .2s;
+}
+/* Survol et section en cours : texte jaune, filet jaune qui se trace de gauche à droite.
+   Le lien de la section en cours garde cet état pendant le défilement (classe posée par script.js). */
+.top-nav a::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+  background: var(--accent); transform: scaleX(0); transform-origin: right center;
+  transition: transform var(--survol-duree) var(--survol-courbe);
+}
+.top-nav a:hover, .top-nav a:focus-visible, .top-nav a.est-actif { color: var(--accent); }
+.top-nav a:hover::after, .top-nav a:focus-visible::after, .top-nav a.est-actif::after { transform: scaleX(1); transform-origin: left center; }
+
+/* ---------- Accueil ---------- */
+.hero { position: relative; min-height: min(100vh, 860px); display: flex; align-items: center; padding-block: 150px 100px; }
+.hero-grille { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: var(--gouttiere); align-items: center; }
+/* Trois blocs qui respirent : titre, sous-titre, boutons. Même espace entre chacun (56 px en bureau). */
+.hero-copy { display: flex; flex-direction: column; align-items: flex-start; gap: clamp(36px, 3.9vw, 56px); }
+.hero-lead {
+  margin: 0; font-size: 15px; line-height: 1.9; letter-spacing: var(--app-texte); text-transform: uppercase; color: var(--blanc);
+}
+.hero-actions { display: flex; align-items: center; gap: 36px; flex-wrap: wrap; }
+.hero-visual { position: relative; }
+.hero-visual::after {
+  content: ""; position: absolute; inset: 6% -4% -4% 8%;
+  border: var(--filet-blanc); transform: rotate(3deg); pointer-events: none;
+}
+.hero-bench { width: 100%; height: auto; }
+.hero-rgb {
+  position: absolute; z-index: 2; margin: 0; width: 31%;
+  padding: 2px; background: var(--accent);   /* cadre jaune de la version actuelle, affiné (3 px → 2 px) */
+  box-shadow: 0 24px 48px rgba(5, 2, 30, .55);
+}
+/* Effet capteur : cadre jaune carré, photo aux coins arrondis à l'intérieur (comme sur 3l-optronics.com, affiné).
+   Même arrondi que les photos de la galerie au survol. */
+.hero-rgb img { width: 100%; aspect-ratio: 1.3 / 1; object-fit: cover; border-radius: 6px; }
+.hero-rgb-1 { top: -2%; right: 0; transform: rotate(-3deg); }
+.hero-rgb-2 { bottom: 4%; right: -6%; width: 28%; transform: rotate(6deg); }
+.hero-rgb-3 { bottom: -6%; left: 0; width: 27%; transform: rotate(-2deg); }
+
+/* ---------- Benchmark ---------- */
+/* Un seul tableau dans le HTML, deux affichages :
+   - le tableau entier tant qu'il tient dans sa colonne ;
+   - un accordéon (un réseau par ligne, ses cinq valeurs à l'ouverture) dès qu'il ne tient plus.
+   script.js mesure la place réelle et fabrique l'accordéon à partir du tableau : les chiffres ne sont écrits qu'une fois.
+   Pas de défilement horizontal. Sans script, le tableau reste affiché (avec défilement si besoin). */
+.benchmark-panel { min-width: 0; }
+.benchmark-heading { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin-bottom: 20px; }
+.benchmark-heading h3 { margin-top: 8px; }
+.benchmark-count { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; opacity: .7; }
+.benchmark-table-wrap, .dataset-table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+/* En-têtes au corps de légende de la charte (10 px Regular, +90), valeurs à 12 px avec l'approche du texte (+60),
+   noms en XBold. Pas de capitales dans le tableau (charte : capitales partout, sauf tableaux). */
+.benchmark-table { font-variant-numeric: tabular-nums; border-top: 1px solid var(--bleu-3); }
+.benchmark-table th, .benchmark-table td { padding: 11px 8px; border-bottom: 1px solid var(--filet-fonce); text-align: right; white-space: nowrap; }
+.benchmark-table th { font-size: 10px; letter-spacing: .09em; line-height: 1.3; text-transform: none; vertical-align: bottom; padding-inline: 6px; }
+.benchmark-table td { font-size: 12px; letter-spacing: .06em; transition: background-color .2s, box-shadow .2s; }
+/* Colonne des noms un peu plus large que le nom le plus long : le décalage du survol reste dans la case jaune */
+.benchmark-table th:first-child, .benchmark-table td:first-child { text-align: left; padding-left: 0; padding-right: 24px; }
+.benchmark-table td:first-child { font-weight: 800; transition: padding .2s ease, background-color .2s, box-shadow .2s; }
+th { font-weight: 400; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; opacity: .75; }
+/* Au survol, comme dans la version actuelle : le nom du réseau se décale et passe en jaune */
+/* La ligne passe en lavande ; l'ombre de 1 px recouvre le filet du dessus : la case est pleine. */
+@media (hover: hover) {
+  .benchmark-table tbody tr:hover td { background: var(--lavande-survol); box-shadow: 0 -1px 0 var(--lavande-survol); }
+  .benchmark-table tbody tr:hover td:first-child { padding-left: 10px; padding-right: 14px; background: var(--accent); box-shadow: 0 -1px 0 var(--accent); }
+}
+
+/* Accordéon */
+.benchmark-list { display: none; border-top: 1px solid var(--bleu-3); }
+.benchmark-panel.is-compact .benchmark-table-wrap { display: none; }
+.benchmark-panel.is-compact .benchmark-list { display: block; }
+.benchmark-list-head { padding: 11px 0; border-bottom: 1px solid var(--filet-fonce); font-size: 10px; line-height: 1.3; letter-spacing: .09em; opacity: .75; }
+.benchmark-row {
+  display: flex; align-items: center; gap: 14px; width: 100%; margin: 0;
+  padding: 14px 4px 14px 0; border: 0; border-bottom: 1px solid var(--filet-fonce); border-radius: 0;
+  background: transparent; color: inherit; text-align: left;
+  transition: background-color .2s, border-color .35s, padding .25s;
+}
+.benchmark-nom { font-size: 12px; font-weight: 800; letter-spacing: .06em; padding: 3px 0; transition: padding .25s, background-color .25s; }
+/* + dessiné en filets de 1 px, qui tourne en × à l'ouverture */
+.benchmark-plus { position: relative; flex: none; width: 12px; height: 12px; margin-left: auto; transition: transform .35s var(--ressort-3l); }
+.benchmark-plus::before, .benchmark-plus::after { content: ""; position: absolute; left: 0; top: 5.5px; width: 12px; height: 1px; background: currentColor; }
+.benchmark-plus::after { transform: rotate(90deg); }
+@media (hover: hover) {
+  .benchmark-row:hover { background: var(--lavande-survol); box-shadow: 0 -1px 0 var(--lavande-survol); }
+  .benchmark-row:hover .benchmark-nom { padding-left: 10px; }
+}
+/* Ouvert : nom sur jaune, filet Bleu 3 qui ferme le bloc. Panneau compact pour voir plusieurs réseaux sur un écran. */
+.benchmark-row[aria-expanded="true"] { padding-bottom: 8px; background: transparent; box-shadow: none; border-bottom-color: transparent; }
+.benchmark-row[aria-expanded="true"] .benchmark-nom { padding: 3px 8px; background: var(--accent); }
+.benchmark-row[aria-expanded="true"] .benchmark-plus { transform: rotate(45deg); }
+.benchmark-detail { display: grid; grid-template-rows: 0fr; border-bottom: 1px solid transparent; transition: grid-template-rows .4s var(--survol-courbe), border-color .4s; }
+.benchmark-detail > div { min-height: 0; overflow: hidden; }
+.benchmark-detail.is-open { grid-template-rows: 1fr; border-bottom-color: var(--bleu-3); }
+.benchmark-metriques {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px 10px;
+  margin: 0; padding: 0 0 10px;
+  opacity: 0; transform: translateY(-6px); transition: opacity .2s, transform .3s;
+}
+.benchmark-detail.is-open .benchmark-metriques { opacity: 1; transform: none; transition: opacity .3s .12s, transform .4s .08s var(--survol-courbe); }
+.benchmark-metriques dt { font-size: 10px; line-height: 1.3; letter-spacing: .09em; opacity: .75; white-space: nowrap; }
+.benchmark-metriques dd { margin: 3px 0 0; font-size: 12px; letter-spacing: .06em; font-variant-numeric: tabular-nums; }
+
+/* ---------- Vidéo ---------- */
+.video-frame { position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: #0b0733; border: var(--filet-blanc); }
+.video-frame > img { width: 100%; height: 100%; object-fit: cover; opacity: .75; }
+/* La vidéo apparaît en fondu par-dessus l'aperçu, juste après le tracé du contour du bouton lecture */
+.video-frame video {
+  position: absolute; z-index: 2; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #0b0733;
+  opacity: 0; visibility: hidden; transition: opacity .4s ease .35s, visibility 0s .75s;
+}
+.video-frame.has-local-video video { opacity: 1; visibility: visible; transition: opacity .4s ease .35s, visibility 0s; }
+.video-frame iframe { animation: video-apparition .4s ease .35s both; }
+@keyframes video-apparition { from { opacity: 0; } to { opacity: 1; } }
+.video-frame.has-local-video > img, .video-frame.has-local-video::after, .video-frame.has-local-video .video-overlay { visibility: hidden; transition: visibility 0s .75s; }
+.video-frame::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(20, 10, 80, .7), rgba(20, 10, 80, .1)); }
+.video-overlay { position: absolute; z-index: 1; inset: 0; display: flex; flex-direction: column; justify-content: space-between; padding: 28px; }
+/* Bouton lecture « viseur » : triangle dessiné comme les flèches, deux coins de visée autour.
+   Lancer la vidéo est une action : les coins tournent au survol de toute la vidéo, le contour se trace au clic
+   (même comportement que Download). Toute la vidéo est cliquable. */
+.play-button {
+  position: relative; align-self: center; margin: auto; display: grid; place-items: center;
+  width: 84px; height: 84px; padding: 0; border: 0; background: transparent;
+  color: var(--neutre-1); cursor: pointer; transition: color .2s;
+}
+.play-button .triangle { width: 20px; height: 20px; margin-left: 3px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linejoin: round; stroke-linecap: round; }
+.play-button .viseur { inset: 0; width: 100%; height: 100%; }
+.video-frame.est-survole .play-button, .video-frame.est-clique .play-button, .play-button:focus-visible { color: var(--accent); }
+/* Petits écrans : bouton lecture plus petit, légendes l'une sous l'autre pour rester dans la vidéo */
+@media (max-width: 700px) {
+  .video-overlay { padding: 16px; }
+  .video-overlay .video-caption { flex-direction: column; justify-content: flex-start; gap: 2px; font-size: 10px; line-height: 1.4; }
+  .video-overlay .video-caption span { white-space: nowrap; }
+  .play-button { width: 56px; height: 56px; }
+  .play-button .triangle { width: 16px; height: 16px; margin-left: 2px; }
+}
+.video-caption { display: flex; justify-content: space-between; gap: 16px; font-weight: 800; font-size: 11px; letter-spacing: var(--app-label); text-transform: uppercase; }
+
+/* ---------- Services ---------- */
+.service-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: var(--gouttiere); row-gap: 24px; margin-top: 56px; }
+.service-card { min-width: 0; display: flex; flex-direction: column; gap: 20px; padding: clamp(28px, 3vw, 44px); }
+.service-card-dark { background: var(--bleu-3); color: var(--neutre-1); }   /* aplat bleu */
+/* Chaque carte a sa couleur d'accent, en miroir : jaune sur la carte foncée, bleu vif sur la carte blanche
+   (label, titre et survol du bouton) */
+.service-card-dark .petit-label, .service-card-dark h3 { color: var(--accent); }
+.service-card-light h3 { color: var(--accent-bleu); }
+.service-card-light { background: var(--blanc); color: var(--bleu-3); }
+#services .lead { max-width: none; }
+.service-card p { margin: 0; max-width: none; font-size: 14px; line-height: 1.85; letter-spacing: var(--app-texte); text-transform: uppercase; }
+.service-tags { display: flex; flex-wrap: wrap; gap: 8px; margin: auto 0 0; padding: 0; list-style: none; }
+.service-tags li { padding: 8px 12px; border: 1px solid currentColor; font-size: 11px; line-height: 1.2; letter-spacing: .08em; text-transform: uppercase; opacity: .85; }
+.service-card-dark .service-tags li { border: var(--filet-blanc); opacity: 1; }
+.service-contact { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; }
+.service-mail { font-size: 12px; letter-spacing: .04em; opacity: .75; user-select: all; }
+/* Au clic, le bouton ne change pas : « Copied to clipboard » se dévoile juste dessous, aligné sur le texte du bouton,
+   sans changer la taille de la carte (même confirmation que l'adresse de Resources) */
+.contact-bouton { position: relative; display: inline-block; max-width: 100%; }
+.contact-bouton .mail-confirmation { left: 22px; margin-top: 6px; }
+
+/* ---------- Contenu du dataset ---------- */
+.dataset-table { min-width: 720px; font-size: 14px; border-top: 1px solid var(--bleu-3); }
+.dataset-table th, .dataset-table td { padding: 20px 16px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--filet-fonce); }
+.dataset-table th:first-child, .dataset-table td:first-child { padding-left: 0; white-space: nowrap; }
+.dataset-table td:first-child { font-weight: 900; font-size: 13px; letter-spacing: var(--app-titre); text-transform: uppercase; }
+.row-index { display: inline-block; margin-right: 14px; font-weight: 400; color: var(--accent-bleu); }
+.status { display: inline-block; padding: 5px 8px 4px; background: var(--accent); color: var(--bleu-3); font-weight: 900; font-size: 10px; line-height: 1; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; }   /* pastille jaune, comme dans la première version */
+
+/* ---------- Exemples ---------- */
+.gallery-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin-top: 56px; }
+.gallery-card { margin: 0; }
+/* Légende de toute la galerie, sous les exemples, au corps du texte, sans exergue */
+.legende-galerie { margin: 44px 0 0; }
+.image-button { display: block; width: 100%; padding: 0; border: var(--filet-blanc); background: none; cursor: zoom-in; overflow: hidden; }   /* contour blanc, le zoom reste à l'intérieur */
+.image-button img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; transition: transform .5s ease, filter .5s ease; }
+.image-button:hover img { transform: scale(1.03); filter: brightness(1.12); }
+
+/* Effet « focus » (regarder de plus près), structure ajoutée par script.js :
+   au repos, la photo remplit la colonne, contour blanc et angles droits, quatre coins jaunes cachés derrière.
+   Au survol, la photo se rétracte de 6 px en s'arrondissant, son contour passe au jaune,
+   les coins sortent et se posent dans l'alignement de la colonne (effet capteur).
+   Au clic, les coins s'éloignent puis la visionneuse s'ouvre. */
+.image-button.est-vise { position: relative; isolation: isolate; border: 0; overflow: visible; }
+.image-cadre { position: relative; z-index: 1; display: block; overflow: hidden; clip-path: inset(0 round 0); transition: clip-path .45s var(--survol-courbe); }
+.image-filet {
+  position: absolute; z-index: 2; inset: 0; border: var(--filet-blanc); pointer-events: none;
+  transition: inset .45s var(--survol-courbe), border-radius .45s var(--survol-courbe), border-color .3s;
+}
+.image-coins { position: absolute; z-index: 0; inset: 0; pointer-events: none; }
+.image-coins i { position: absolute; width: 9px; height: 9px; border: 0 solid var(--accent); transition: transform .45s var(--ressort-3l), opacity .2s; }
+.image-coins i:nth-child(1) { top: 0; left: 0; border-top-width: 1px; border-left-width: 1px; transform: translate(12px, 12px); }
+.image-coins i:nth-child(2) { top: 0; right: 0; border-top-width: 1px; border-right-width: 1px; transform: translate(-12px, 12px); }
+.image-coins i:nth-child(3) { bottom: 0; right: 0; border-bottom-width: 1px; border-right-width: 1px; transform: translate(-12px, -12px); }
+.image-coins i:nth-child(4) { bottom: 0; left: 0; border-bottom-width: 1px; border-left-width: 1px; transform: translate(12px, -12px); }
+@media (hover: hover) {
+  .image-button.est-vise:hover .image-cadre { clip-path: inset(6px round 6px); }
+  .image-button.est-vise:hover .image-filet { inset: 6px; border-radius: 6px; border-color: var(--accent); }
+  .image-button.est-vise:hover .image-coins i { transform: none; }
+}
+/* Sur écran tactile, le même effet se joue au moment du toucher */
+.image-button.est-touche .image-cadre { clip-path: inset(6px round 6px); }
+.image-button.est-touche img { transform: scale(1.03); filter: brightness(1.12); }
+.image-button.est-touche .image-filet { inset: 6px; border-radius: 6px; border-color: var(--accent); }
+.image-button.est-touche .image-coins i { transform: none; }
+.image-button.est-clique .image-coins { z-index: 3; }
+.image-button.est-clique.est-clique .image-coins i { opacity: 0; transition: transform .45s cubic-bezier(.3, 0, .2, 1), opacity .15s ease .3s; }
+.image-button.est-clique.est-clique .image-coins i:nth-child(1) { transform: translate(-40px, -40px); }
+.image-button.est-clique.est-clique .image-coins i:nth-child(2) { transform: translate(40px, -40px); }
+.image-button.est-clique.est-clique .image-coins i:nth-child(3) { transform: translate(40px, 40px); }
+.image-button.est-clique.est-clique .image-coins i:nth-child(4) { transform: translate(-40px, 40px); }
+.image-button.sans-transition .image-coins i { transition: none !important; }
+/* « Touch to zoom » : seulement sur les écrans tactiles, à égale distance du titre et des photos */
+.mention-tactile { display: none; margin: 22px 0 0; font-size: 10px; line-height: 1; letter-spacing: .09em; text-transform: uppercase; opacity: .75; }
+@media (hover: none) {
+  .mention-tactile { display: block; }
+  .mention-tactile + .gallery-grid { margin-top: 26px; }
+}
+figcaption {
+  display: flex; gap: 14px; padding-top: 14px; border-top: var(--filet-blanc); margin-top: 14px;
+  font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
+}
+figcaption span { font-weight: 900; color: var(--accent); }
+
+/* ---------- Ressources ---------- */
+.downloads-grid { align-items: end; }
+.contact-line {
+  max-width: 34em; margin: 26px 0 0; padding-top: 22px; border-top: 1px solid var(--filet-fonce);   /* filet entre le texte et le contact */
+  font-size: 15px; line-height: 1.9; letter-spacing: var(--app-texte); text-transform: uppercase;   /* même corps que le texte au-dessus */
+}
+/* Adresse : en gras avec sa flèche, sans trait au repos. Au survol, une bande jaune glisse derrière, de gauche à droite.
+   Au clic, l'adresse est copiée et « Copied to clipboard » se dévoile juste dessous, sans changer la taille du bloc. */
+.contact-mail { position: relative; display: inline-block; margin-left: 12px; }
+.lien-mail { display: inline-flex; align-items: baseline; gap: 10px; padding: 0; border: 0; background: none; color: inherit; font-weight: 900; letter-spacing: .04em; text-transform: none; }
+.lien-mail-texte { position: relative; isolation: isolate; }
+.lien-mail-texte::before {
+  content: ""; position: absolute; z-index: -1; left: -.15em; right: -.15em; bottom: .05em; height: .62em;
+  background: var(--accent); transform: scaleX(0); transform-origin: right center;
+  transition: transform var(--survol-duree) var(--survol-courbe);
+}
+.lien-mail:hover .lien-mail-texte::before, .lien-mail:focus-visible .lien-mail-texte::before { transform: scaleX(1); transform-origin: left center; }
+.mail-confirmation {
+  position: absolute; left: 0; top: 100%; margin-top: 2px;
+  font-size: 10px; line-height: 1.4; letter-spacing: .09em; text-transform: uppercase; white-space: nowrap; opacity: .75;
+  clip-path: inset(0 100% 0 0); transition: clip-path var(--survol-duree) var(--survol-courbe); pointer-events: none;
+}
+.mail-confirmation.est-visible { clip-path: inset(0 0 0 0); }
+.mail-confirmation.est-visible.est-sortie { clip-path: inset(0 0 0 100%); }
+.mail-confirmation.sans-transition { transition: none; }
+.download-list { border-top: 1px solid var(--bleu-3); }
+.download-item {
+  display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 22px 0; border-bottom: 1px solid var(--filet-fonce);
+  background-image: linear-gradient(var(--lavande-survol), var(--lavande-survol));
+  background-repeat: no-repeat; background-position: right center; background-size: 0% 100%;
+  transition: background-size var(--survol-duree) var(--survol-courbe), padding .25s ease;
+}
+.download-item b { display: block; font-size: 15px; letter-spacing: var(--app-titre); text-transform: uppercase; }
+.download-item small { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin-top: 6px; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; }
+/* Une fois le lien publié : la ligne se remplit de lavande de gauche à droite, le texte se décale, la flèche tourne */
+@media (hover: hover) {
+  .download-item:not(.is-disabled):hover { background-position: left center; background-size: 100% 100%; padding-inline: 10px; }
+}
+/* Pastille de statut, comme « Available » en 04. Il suffit de retirer is-disabled (et de mettre le lien) :
+   « Coming soon » laisse la place à « Available ». Seuls le texte et la flèche sont estompés, pas la pastille. */
+.status-a-venir { background: transparent; box-shadow: inset 0 0 0 1px currentColor; }
+.download-item .status-disponible, .download-item.is-disabled .status-disponible { display: none; }
+.download-item:not(.is-disabled) .status-disponible { display: inline-block; }
+.download-item:not(.is-disabled) .status-a-venir { display: none; }
+.download-item.is-disabled { opacity: 1; }
+.download-item.is-disabled b, .download-item.is-disabled .download-source, .download-item.is-disabled .fleche { opacity: .5; }
+
+.is-disabled { opacity: .5; cursor: not-allowed; }
+
+/* ---------- Pied de page ---------- */
+.site-footer { padding-block: 40px; background: transparent; color: var(--neutre-1); }   /* texture en continuité */
+html.footer-bleu .site-footer { background: var(--bleu-3); }   /* test : ?footer=bleu (bleu brut) */
+.footer-grille { display: flex; align-items: center; justify-content: space-between; gap: 32px; flex-wrap: wrap; }
+.site-footer .titre-logotype { height: 24px; }
+.site-footer p { margin: 0; font-size: 12px; letter-spacing: var(--app-texte); text-transform: uppercase; color: var(--neutre-3); }
+.footer-social { display: flex; gap: 10px; }
+.footer-icon { display: grid; place-items: center; width: 38px; height: 38px; border: var(--filet-blanc); color: var(--neutre-3); transition: border-color .2s, color .2s; }
+.footer-icon svg { width: 16px; height: 16px; fill: currentColor; }
+.footer-icon:hover { border-color: var(--accent); color: var(--accent); }
+.retour-haut { position: relative; display: inline-flex; align-items: baseline; gap: 8px; padding-block: 6px; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--neutre-3); transition: color .2s; }
+/* Même survol que le menu : texte jaune, filet jaune qui se trace de gauche à droite */
+.retour-haut::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+  background: var(--accent); transform: scaleX(0); transform-origin: right center;
+  transition: transform var(--survol-duree) var(--survol-courbe);
+}
+.retour-haut:hover, .retour-haut:focus-visible { color: var(--accent); }
+.retour-haut:hover::after, .retour-haut:focus-visible::after { transform: scaleX(1); transform-origin: left center; }
+
+/* ---------- Visionneuse ---------- */
+/* Ouverture et fermeture en fondu. La croix est accrochée à l'angle de la photo :
+   à l'extérieur sur grand écran, juste au-dessus sur tablette et mobile.
+   Croix dessinée au trait des flèches ; au survol, elle passe au jaune et fait un quart de tour. */
+.lightbox {
+  position: fixed; z-index: 30; inset: 0; display: grid; place-items: center; padding: 30px; background: rgba(11, 7, 51, .94);
+  opacity: 0; visibility: hidden; transition: opacity .3s ease, visibility 0s .3s;
+}
+.lightbox.is-open { opacity: 1; visibility: visible; transition: opacity .3s ease; }
+.lightbox-cadre { position: relative; transform: scale(.985); transition: transform .4s ease; }
+.lightbox.is-open .lightbox-cadre { transform: none; }
+.lightbox img { max-width: min(1100px, 92vw, calc(100vw - 60px)); max-height: 80vh; border: var(--filet-blanc); }   /* l'image tient dans la marge de 30 px de la visionneuse */
+.lightbox-close {
+  position: absolute; top: -36px; right: -36px; width: 30px; height: 30px; display: grid; place-items: center;
+  padding: 0; border: 0; background: transparent; color: var(--neutre-1); cursor: pointer; transition: color .2s;
+}
+.lightbox-close svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; transition: transform .45s var(--ressort-3l); }
+.lightbox-close:focus-visible { color: var(--accent); outline-offset: 2px; }
+@media (hover: hover) {
+  .lightbox-close:hover { color: var(--accent); }
+  .lightbox-close:hover svg { transform: rotate(90deg); }
+}
+@media (max-width: 900px) { .lightbox-close { top: -40px; right: 0; } }
+
+/* ---------- Intro ---------- */
+/* Le logo, net, sur la page floutée (18 px) sous un voile Bleu 3 à 50 %.
+   Une ligne jaune descend ensuite et lit l'écran : au-dessus d'elle, la page
+   est nette, et le logo s'efface au passage de la ligne. Un clic lance la lecture
+   tout de suite. La durée de lecture vient de script.js (--lecture). */
+.intro {
+  position: fixed; inset: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: center;
+  -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
+  background-color: rgba(20, 10, 80, .5);
+  clip-path: inset(0 0 0 0);
+  cursor: pointer;
+}
+.intro-logo { position: relative; z-index: 1; width: clamp(180px, 42vmin, 480px); height: auto; }
+/* Desktop : c'est le carré du logo qui est centré sur la page, pas le bloc carré + 3L OPTRONICS.
+   Dans le SVG (850,39 × 850,39), le carré va de x 224,13 à 841,09 et de y 0 à 616,96 :
+   son centre (532,61 ; 308,48) est à +107,4 / −116,7 du centre du fichier, soit 12,63 % et 13,72 % de sa taille. */
+@media (min-width: 901px) {
+  .intro-logo { transform: translate(-12.63%, 13.72%); }
+}
+/* La lecture : l'écran flouté se retire vers le bas, au rythme de la ligne jaune */
+.intro.lecture {
+  clip-path: inset(100% 0 0 0); pointer-events: none;
+  transition: clip-path var(--lecture, 1.4s) cubic-bezier(.45, 0, .25, 1);
+}
+.intro-ligne {
+  position: fixed; z-index: 101; left: 0; right: 0; top: 0; height: 1px; pointer-events: none;
+  background: var(--accent); box-shadow: 0 0 16px 2px rgba(220, 255, 30, .35); opacity: 0;
+}
+.intro-ligne::before {   /* légère lueur sur les lignes qui viennent d'être lues */
+  content: ""; position: absolute; left: 0; right: 0; bottom: 1px; height: 60px;
+  background: linear-gradient(0deg, rgba(220, 255, 30, .08), rgba(220, 255, 30, 0));
+}
+.intro-ligne.en-lecture {
+  opacity: 1;
+  transform: translateY(100vh);
+  transform: translateY(100dvh);   /* hauteur visible réelle sur mobile */
+  transition: transform var(--lecture, 1.4s) cubic-bezier(.45, 0, .25, 1), opacity .15s;
+}
+.intro.fini, .intro-ligne.fini { display: none; }
+@media (prefers-reduced-motion: reduce) { .intro.lecture { transition: none; } .intro-ligne { display: none; } }
+/* Moins de mouvement demandé par l'appareil : les états changent sans animation */
+@media (prefers-reduced-motion: reduce) {
+  .button, .fleche, .lien-texte, .lien-texte::after, .top-nav a::after, .retour-haut::after, .viseur rect,
+  .benchmark-row, .benchmark-nom, .benchmark-plus, .benchmark-detail, .benchmark-metriques,
+  .image-button img, .image-cadre, .image-filet, .image-coins i, .lightbox, .lightbox-cadre, .lightbox-close svg,
+  .lien-mail-texte::before, .mail-confirmation, .download-item, .video-frame video { transition: none !important; }
+  .video-frame iframe { animation: none; }
+}
+
+/* Retours à la ligne voulus (03) : ils tiennent à partir de 1400 px de large ;
+   en dessous, le texte revient à la ligne naturellement. */
+@media (max-width: 1399px) { br.bureau { display: none; } }
+
+/* ---------- Petits écrans ---------- */
+@media (max-width: 900px) {
+  .header-grille { grid-template-columns: 1fr auto; row-gap: 14px; }
+  .header-droite { display: contents; }
+  .top-nav { grid-column: 1 / -1; grid-row: 2; overflow-x: auto; }
+  .hero { min-height: 0; padding-block: 150px 80px; }
+  .hero h1 { font-size: min(10.2vw, 70.8px); }   /* une colonne : « VISION FAILS, » tient toujours sur une ligne */
+  /* Surlignement quand une ligne de titre passe sur deux (« A structure designed ») :
+     la bande suit chaque ligne (fond découpé ligne par ligne), mêmes mesures qu'en bureau,
+     et le texte passe en produit par-dessus. */
+  h2:not(.surligne-droite) .surligne {
+    display: inline;
+    padding-right: .78em; margin-right: -.78em;
+    background: linear-gradient(rgb(220 255 30 / var(--sl-bande-o, 1)), rgb(220 255 30 / var(--sl-bande-o, 1))) no-repeat right calc(0px - var(--sl-bande-x, 0px)) top .942em / calc(100% - .78em) .66em;
+    -webkit-box-decoration-break: clone; box-decoration-break: clone;
+  }
+  h2:not(.surligne-droite) .surligne::after { display: none; }
+  h2:not(.surligne-droite) .surligne-texte { mix-blend-mode: multiply; }
+  .hero-grille, .deux-colonnes, .service-grid { grid-template-columns: 1fr; row-gap: 40px; }
+  .hero-visual { margin-top: 12px; }
+  .gallery-grid { grid-template-columns: 1fr 1fr; }
+  .gallery-card:last-child { grid-column: 1 / -1; }
+}
+@media (max-width: 900px) {
+  .dataset-table { min-width: 0; }   /* tablette : le tableau tient dans la largeur */
+}
+@media (max-width: 600px) {
+  .benchmark-heading { flex-wrap: wrap; }
+
+  /* Contenu du dataset sur mobile : une fiche par bloc */
+  .dataset-table, .dataset-table tbody, .dataset-table tr, .dataset-table td { display: block; }
+  .dataset-table thead { display: none; }
+  .dataset-table tr { position: relative; padding: 20px 0; border-bottom: 1px solid var(--filet-fonce); }
+  .dataset-table td, .dataset-table td:first-child { padding: 0; border: 0; white-space: normal; }
+  .dataset-table td:first-child { padding-right: 110px; font-size: 14px; }
+  .dataset-table td:nth-child(2), .dataset-table td:nth-child(3) { margin-top: 12px; font-size: 15px; line-height: 1.5; }
+  .dataset-table td:nth-child(2)::before, .dataset-table td:nth-child(3)::before {
+    display: block; margin-bottom: 2px; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; opacity: .7;
+  }
+  .dataset-table td:nth-child(2)::before { content: "Content"; }
+  .dataset-table td:nth-child(3)::before { content: "Purpose"; }
+  .dataset-table td:last-child { position: absolute; top: 20px; right: 0; }
+}
+@media (max-width: 560px) {
+  .site-header .button { display: none; }
+  /* Cartes de service : elles suivent l'écran jusqu'à 320 px, le texte des boutons peut passer sur deux lignes */
+  .service-card { padding: 24px 20px; }
+  .service-card .button { white-space: normal; max-width: 100%; line-height: 1.3; }
+  .gallery-grid { grid-template-columns: 1fr; }
+  .footer-grille { flex-direction: column; align-items: flex-start; }
+}
+
+/* ---------- Pointeur ---------- */
+a, button, .button, .play-button, .image-button, .lien-mail, .intro, .lightbox, .lightbox-close, .video-frame:not(.has-local-video) {
+  cursor: url("assets/curseur-cible-active.svg") 12 12, pointer;
+}
+.is-disabled { cursor: url("assets/curseur-cible.svg") 12 12, not-allowed; }
+
+
+.hf-downloads {  font-weight: 700; white-space: nowrap; }
